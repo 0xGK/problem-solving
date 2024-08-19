@@ -11,11 +11,10 @@ ll cnf=0,p;
 vector<ll>segTree(MAX_N*4);
 vector<ll>tree1(MAX_N*4);
 
-void dfs(ll v,ll p){
+void dfs(ll v){
     Qu[v].first = ++cnf;
     for(ll nv : graph[v]){
-        if (nv==p){continue;}
-        dfs(nv,v);
+        dfs(nv);
     }
     Qu[v].second=cnf;
 }
@@ -56,7 +55,7 @@ int main(){
         cin >> p;
         if(p!=-1){graph[p].push_back(i);}
     }
-    dfs(1, 0);
+    dfs(1);
     //for(int i=1;i<=n;i++){
     //    cout << Qu[i].first << ' ' << Qu[i].second <<'\n';
     //}
