@@ -1,13 +1,9 @@
 #include <iostream>
-#include <cstring>
-#include<cstdio>
-#include<vector>
-#include<queue>
-#include<string.h>
+#include <vector>
+#include <queue>
 
-#define VMAX 500
-#define EMAX 10000
-#define MAX_VALUE 500500
+#define MAX_N 501
+#define INF 987654321
 
 using namespace std;
 typedef struct  Node{
@@ -21,108 +17,101 @@ struct compare{
     }
 };
 
-vector<Node> adjList[VMAX+5];
-vector<int> delList[VMAX+5];
+vector<Node> adjList[MAX_N];
+vector<int> delList[MAX_N];
 
-int dist[VMAX+5];
-int visited[505];
+int dist[MAX_N];
+int visited[MAX_N];
 
 void dijkstra(int start) {
-    priority_queue<Node, vector<Node>, compare> PQ;
+    priority_queue<Node, vector<Node>, compare> pq;
 
     dist[start] = 0;
-    PQ.push({start, 0});
+    pq.push({start, 0});
 
-    while (!PQ.empty()) {
-        Node now = PQ.top();
-
-        PQ.pop();
-        if (dist[now.dest] < now.cost)
+    while (!pq.empty()) {
+        Node cur = pq.top(); pq.pop();
+        auto src=cur.dest;
+        if (dist[src] < cur.cost)
             continue;
 
-        for (Node next : adjList[now.dest]) {
-            // 최단거리로 지워진 간선은 건너뛴다.
+        for (Node next : adjList[src]) {
             if(next.cost == -1) continue; 
 
-            // cost 가 더 작을 때만 갱신하고 PQ큐에 넣음
-            if (dist[next.dest] > next.cost + now.cost) {
-                dist[next.dest] = next.cost + now.cost;
-                PQ.push({next.dest, dist[next.dest]});
-                // 새로운 최단거리가 있음으로 이전 것을 초기화한다.
-                delList[next.dest].clear(); 
-                // 새로운 최단거리 노드를 넣는다.
-                delList[next.dest].push_back(now.dest); 
+            int dest = next.dest;
+            int cost = next.cost + cur.cost; // cur.cost이 값이 dist[src]이다.
+
+            if (dist[dest] > cost) {
+                dist[dest] = cost;
+                pq.push({dest, cost});
+                delList[dest].clear(); 
+                delList[dest].push_back(src); 
 
             }
-            // 같은 비용이라면, 최소거리 경로가 여러개 라는 의미이다.
-            else if(dist[next.dest] == next.cost + now.cost){ 
-                delList[next.dest].push_back(now.dest);
+            else if(dist[dest] == cost){ 
+                delList[dest].push_back(src);
             }
         }
     }
 }
 
-void del_bfs(int start) {
+void del_bfs(int end) {
+    queue<int> q;
+    q.push(end);
 
-    queue<int> Q;
-    Q.push(start);
+    while (!q.empty()) {
+        int cur = q.front(); q.pop();
 
-    while (!Q.empty()) {
-        int now = Q.front();
-        Q.pop();
+        if(visited[cur] != 0) continue;
+        visited[cur] = 1;
 
-        if(visited[now] != 0){
-            continue;
-        }
-        visited[now] = 1;
-
-        for(int i=0;i<delList[now].size();i++){
-            int next = delList[now][i];
-
-            for (int j = 0; j < adjList[next].size(); j++) {
-                if(adjList[next][j].dest == now){
-                    adjList[next][j].cost = -1;
+        for(auto src : delList[cur]){
+            for(auto& edge : adjList[src]){
+                if(edge.dest == cur){
+                    edge.cost = -1;
                 }
             }
-            Q.push(next);
+            q.push(src);
         }
+
+    }
+}
+
+void init(){
+    for (int i = 0; i < MAX_N; i++) {
+        adjList[i].clear();
+        delList[i].clear();
+        dist[i] = INF;
+        visited[i] = 0;
     }
 }
 
 int main() {
     while(1){
         int N, M, S, E;
-        scanf(" %d %d", &N, &M);
-        if(N==0&&M==0){
+        scanf("%d %d", &N, &M);
+        if(N==0 && M==0){
             break;
         }
 
-        scanf(" %d %d", &S, &E);
+        init();
 
-        // 인접리스트 초기화
-        for (int i = 0; i < N + 1; i++) {
-            adjList[i].clear();
-            delList[i].clear();
-            dist[i] = MAX_VALUE;
-            visited[i] = 0;
-        }
-
+        scanf("%d %d", &S, &E);
         for (int i = 0; i < M; i++) {
             int a, b, c;
-            scanf(" %d %d %d", &a, &b, &c);
+            scanf("%d %d %d", &a, &b, &c);
             adjList[a].push_back({b, c});
         }
 
         dijkstra(S);
-
         del_bfs(E);
 
-        for (int i = 0; i < N + 1; i++) {
-            dist[i] = MAX_VALUE;
+        for (int i = 0; i <= N; i++) {
+            dist[i] = INF;
         }       
         dijkstra(S);
 
-        if (dist[E] == MAX_VALUE) {
+        if (dist[E] == INF) {
             printf("-1\n");
         }else{
             printf("%d\n", dist[E]);
