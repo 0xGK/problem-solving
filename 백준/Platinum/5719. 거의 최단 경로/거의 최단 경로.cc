@@ -10,16 +10,14 @@
 #define MAX_VALUE 500500
 
 using namespace std;
-struct Node {
-    int to;
+typedef struct  Node{
+    int dest;
     int cost;
+}Node;
 
-    Node(int to, int cost) : to(to), cost(cost) {
-    }
-
-    // min-heap (오름차순)
-    bool operator<(const Node& a) const {
-        return a.cost < cost;
+struct compare{
+    bool operator()(const Node &a, const Node &b){
+        return a.cost > b.cost;
     }
 };
 
@@ -30,35 +28,35 @@ int dist[VMAX+5];
 int visited[505];
 
 void dijkstra(int start) {
-    priority_queue<Node> PQ;
+    priority_queue<Node, vector<Node>, compare> PQ;
 
     dist[start] = 0;
-    PQ.push(Node(start, 0));
+    PQ.push({start, 0});
 
     while (!PQ.empty()) {
         Node now = PQ.top();
 
         PQ.pop();
-        if (dist[now.to] < now.cost)
+        if (dist[now.dest] < now.cost)
             continue;
 
-        for (Node next : adjList[now.to]) {
+        for (Node next : adjList[now.dest]) {
             // 최단거리로 지워진 간선은 건너뛴다.
             if(next.cost == -1) continue; 
 
             // cost 가 더 작을 때만 갱신하고 PQ큐에 넣음
-            if (dist[next.to] > next.cost + now.cost) {
-                dist[next.to] = next.cost + now.cost;
-                PQ.push(Node(next.to, dist[next.to]));
+            if (dist[next.dest] > next.cost + now.cost) {
+                dist[next.dest] = next.cost + now.cost;
+                PQ.push({next.dest, dist[next.dest]});
                 // 새로운 최단거리가 있음으로 이전 것을 초기화한다.
-                delList[next.to].clear(); 
+                delList[next.dest].clear(); 
                 // 새로운 최단거리 노드를 넣는다.
-                delList[next.to].push_back(now.to); 
+                delList[next.dest].push_back(now.dest); 
 
             }
             // 같은 비용이라면, 최소거리 경로가 여러개 라는 의미이다.
-            else if(dist[next.to] == next.cost + now.cost){ 
-                delList[next.to].push_back(now.to);
+            else if(dist[next.dest] == next.cost + now.cost){ 
+                delList[next.dest].push_back(now.dest);
             }
         }
     }
@@ -82,7 +80,7 @@ void del_bfs(int start) {
             int next = delList[now][i];
 
             for (int j = 0; j < adjList[next].size(); j++) {
-                if(adjList[next][j].to == now){
+                if(adjList[next][j].dest == now){
                     adjList[next][j].cost = -1;
                 }
             }
@@ -92,7 +90,6 @@ void del_bfs(int start) {
 }
 
 int main() {
-
     while(1){
         int N, M, S, E;
         scanf(" %d %d", &N, &M);
@@ -113,7 +110,7 @@ int main() {
         for (int i = 0; i < M; i++) {
             int a, b, c;
             scanf(" %d %d %d", &a, &b, &c);
-            adjList[a].push_back(Node(b, c));
+            adjList[a].push_back({b, c});
         }
 
         dijkstra(S);
