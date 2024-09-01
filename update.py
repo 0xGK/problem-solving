@@ -4,9 +4,7 @@ import os
 from urllib import parse
 
 HEADER="""# 
-# 백준 & 프로그래머스 문제 풀이 목록
-
-프로그래머스의 경우, 푼 문제 목록에 대한 마이그레이션이 필요합니다.
+# 백준 문제 풀이 목록
 
 """
 
@@ -14,9 +12,12 @@ def main():
     content = ""
     content += HEADER
     
-    directories = [];
-    solveds = [];
+    directories = []
+    solveds = {}
 
+    # Define a custom order for the categories
+    custom_order = ["백준", "Bronze", "Silver", "Gold", "Platinum"]
+    
     for root, dirs, files in os.walk("."):
         dirs.sort()
         if root == '.':
@@ -38,19 +39,27 @@ def main():
             continue
             
         if directory not in directories:
-            if directory in ["백준"]:
-                content += "## 📚 {}\n".format(directory)
-            else:
-                content += "### 🚀 {}\n".format(directory)
-                content += "| 문제번호 | 링크 |\n"
-                content += "| ----- | ----- |\n"
             directories.append(directory)
+            solveds[directory] = []
 
         for file in files:
-            if category not in solveds:
-                content += "|{}|[링크]({})|\n".format(category, parse.quote(os.path.join(root, file)))
-                solveds.append(category)
-                print("category : " + category)
+            if category not in solveds[directory]:
+                solveds[directory].append((category, parse.quote(os.path.join(root, file))))
+
+    # Sort directories according to the custom order
+    directories = sorted(directories, key=lambda x: custom_order.index(x) if x in custom_order else len(custom_order))
+
+    # Write content according to sorted directories
+    for directory in directories:
+        print(directory)
+        if directory == "백준":
+            content += "## 📚 {}\n".format(directory)
+        else:
+            content += "### 🚀 {}\n".format(directory)
+            content += "| 문제번호 | 링크 |\n"
+            content += "| ----- | ----- |\n"
+        for category, link in sorted(solveds[directory], key=lambda x: custom_order.index(x[0].lower()) if x[0].lower() in custom_order else len(custom_order)):
+            content += "|{}|[링크]({})|\n".format(category, link)
 
     with open("README.md", "w") as fd:
         fd.write(content)
