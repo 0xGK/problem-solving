@@ -31,7 +31,7 @@ jobs: # 실제 실행될 내용
         git config --global user.name 'GK' # 유저명
         git config --global user.email 'weeeeek2@naver.com' # 유저 이메일
         git add -A
-        git commit -am "auto update README.md" # 커밋 메시지
+        git diff-index --quiet HEAD || git commit -m "auto update README.md" || true
     - name: Push changes # 4) 메인에 푸시
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
