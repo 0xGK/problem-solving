@@ -1,5 +1,6 @@
 import java.util.*;
-import java.io.FileInputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 class Solution
 {
@@ -61,22 +62,26 @@ class Solution
 	public static void main(String args[]) throws Exception
 	{
 //		System.setIn(new FileInputStream("res/input.txt"));
-		Scanner sc = new Scanner(System.in);
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int T;
-		T=sc.nextInt();
+		T = Integer.parseInt(br.readLine()); 
 		for(int test_case = 1; test_case <= T; test_case++)
 		{
-			N = sc.nextInt();
-			for(int i=0; i<N; i++) {
-				for(int j=0; j<N; j++) {
-					graph[i][j]=sc.nextInt();
-				}
-			}
+			N = Integer.parseInt(br.readLine());
+			for (int i = 0; i < N; i++) {
+                String[] line = br.readLine().split(" ");
+                for (int j = 0; j < N; j++) {
+                    graph[i][j] = Integer.parseInt(line[j]);
+                }
+            }
 			int sx, sy, ex, ey;
-			sx = sc.nextInt();
-			sy = sc.nextInt();
-			ex = sc.nextInt();
-			ey = sc.nextInt();
+			String[] start = br.readLine().split(" ");
+			sx = Integer.parseInt(start[0]);
+			sy = Integer.parseInt(start[1]);
+			
+			String[] end = br.readLine().split(" ");
+            ex = Integer.parseInt(end[0]);
+            ey = Integer.parseInt(end[1]);
 			startPoint = new Point(sx, sy, 0);
 			endPoint = new Point(ex, ey, 0);
 			
