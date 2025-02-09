@@ -41,11 +41,6 @@ class Solution {
 		return node.size;
 	}
 	
-	static int getTreeSize(Node node) {
-		
-		return 1;
-	}
-	
 	static int findParent(Node n1, Node n2) {
 		// Set same depth
 		while(depth[n1.id] != depth[n2.id]) {
