@@ -6,23 +6,17 @@ public class Solution {
 	static final int EAST = 1;
 	static final int MAX_N = 100;
 	static int[][] board;
+	static int[] prevLadder;
+	static int[] nextLadder;
 	
 	static int nextDir(int x, int y) {
-		int changeDir=0;
 		if(y-1>=0 && board[x][y-1]==1) {
-			while(y-1>=0 && board[x][y-1]==1) {
-				y--;
-				changeDir+=WEST;
-			}
+			return prevLadder[y];
 		}
 		else if(y+1<MAX_N && board[x][y+1]==1) {
-			while(y+1<MAX_N && board[x][y+1]==1) {
-				y++;
-				changeDir+=EAST;
-			}
+			return nextLadder[y];
 		}
-		return changeDir;
-
+		return y;
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -33,10 +27,13 @@ public class Solution {
 		
 		int T = 10;
 		for(int testCase=1; testCase<=T; ++testCase) {
+			board = new int[MAX_N][MAX_N];
+			nextLadder = new int[MAX_N];
+			prevLadder = new int[MAX_N];
+			
 			br.readLine();
 			sb.append("#").append(testCase).append(" ");
 			
-			board = new int[MAX_N][MAX_N];
 			for(int i=0; i<MAX_N; ++i) {
 				st = new StringTokenizer(br.readLine());
 				for(int j=0; j<MAX_N; ++j) {
@@ -44,16 +41,22 @@ public class Solution {
 					board[i][j]=Integer.parseInt(st.nextToken());
 				}
 			}
+			
+			int prev=0;
 			int end=0;
-			for(int j=0; j<MAX_N; ++j) {
-				if(board[MAX_N-1][j]==2) {
-					end = j;
-					break;
+			for(int next=0; next<MAX_N; ++next) {
+				if(board[0][next]==1) {
+					nextLadder[prev]=next;
+					prevLadder[next]=prev;
+					prev=next;
+				}
+				if(board[MAX_N-1][next]==2) {
+					end = next;
 				}
 			}
 			
 			for(int i=MAX_N-2; i>=0; --i) {
-				end += nextDir(i, end);
+				end = nextDir(i, end);
 			}
 			sb.append(end).append("\n");
 			
