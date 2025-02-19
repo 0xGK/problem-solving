@@ -5,8 +5,9 @@ public class Main {
 	static int N, M;
 	static boolean[] visited;
 	static int[] sequence;
+	static StringBuilder sb;
 	
-    static void backtrack(int depth, StringBuilder sb) {
+    static void backtrack(int depth) {
         if (depth == M) {
         	for(int i=0; i<M; i++) {
         		sb.append(sequence[i]).append(" ");
@@ -20,7 +21,7 @@ public class Main {
             if (!visited[i]) {
                 visited[i] = true;
                 sequence[depth] = i;
-                backtrack(depth + 1, sb);
+                backtrack(depth + 1);
                 visited[i] = false;
             }
         }
@@ -28,7 +29,7 @@ public class Main {
     
     public static void main(String[] args) throws Exception {
 //        System.setIn(new FileInputStream("input.txt"));
-    	StringBuilder sb = new StringBuilder();
+    	sb = new StringBuilder();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
@@ -37,7 +38,7 @@ public class Main {
         visited = new boolean[N+1];
         sequence = new int[M];
         
-        backtrack(0, sb);
+        backtrack(0);
         System.out.println(sb);
         br.close();
     }
