@@ -24,36 +24,34 @@ public class Main {
 
     }
     
-    public static void solution(int currentCountryIndex, int nextCountryIndex) {
+    public static boolean isPossible() {    	
+    	for(int countryIndex=0; countryIndex<COUNTRIES_NUMBER; countryIndex++) {
+    		for(int resultIndex=0; resultIndex<3; resultIndex++) {
+    			if(scoreBoard[countryIndex][resultIndex] != 0) {
+    				return false;
+    			}
+    		}
+    	}
+    	return true;
+    }
+    
+    public static void playGameBacktrack(int currentCountryIndex, int nextCountryIndex) {
     	if(flag) return;
-        if (currentCountryIndex == 5) {
-            int winSum = 0;
-            int drawSum = 0;
-            int loseSum = 0;
-            
-            for (int i = 0; i < 6; i++) {
-                winSum += scoreBoard[i][WIN];
-                drawSum += scoreBoard[i][TIE];
-                loseSum += scoreBoard[i][LOOSE];
-            }
-            
-            if (winSum ==0 && loseSum ==0 && drawSum== 0) {
-                possible = 1;
-                flag = true;
-            }
+        if (currentCountryIndex == COUNTRIES_NUMBER-1) {
+        	flag = isPossible();
             return;
         }
         
-        if (nextCountryIndex == 6) {
-            solution(currentCountryIndex + 1, currentCountryIndex + 2);
+        if (nextCountryIndex == COUNTRIES_NUMBER) {
+            playGameBacktrack(currentCountryIndex + 1, currentCountryIndex + 2);
             return;
         }
         
-        
+
         if (scoreBoard[currentCountryIndex][WIN] > 0 && scoreBoard[nextCountryIndex][LOOSE] > 0) {
             scoreBoard[currentCountryIndex][WIN]--;
             scoreBoard[nextCountryIndex][LOOSE]--;
-            solution(currentCountryIndex, nextCountryIndex + 1);
+            playGameBacktrack(currentCountryIndex, nextCountryIndex + 1);
             if(flag) return;
             scoreBoard[currentCountryIndex][WIN]++;
             scoreBoard[nextCountryIndex][LOOSE]++;
@@ -62,7 +60,7 @@ public class Main {
         if (scoreBoard[currentCountryIndex][TIE] > 0 && scoreBoard[nextCountryIndex][TIE] > 0) {
             scoreBoard[currentCountryIndex][TIE]--;
             scoreBoard[nextCountryIndex][TIE]--;
-            solution(currentCountryIndex, nextCountryIndex + 1);
+            playGameBacktrack(currentCountryIndex, nextCountryIndex + 1);
             if(flag) return;
             scoreBoard[currentCountryIndex][TIE]++;
             scoreBoard[nextCountryIndex][TIE]++;
@@ -71,7 +69,7 @@ public class Main {
         if (scoreBoard[currentCountryIndex][LOOSE] > 0 && scoreBoard[nextCountryIndex][WIN] > 0) {
             scoreBoard[currentCountryIndex][LOOSE]--;
             scoreBoard[nextCountryIndex][WIN]--;
-            solution(currentCountryIndex, nextCountryIndex + 1);
+            playGameBacktrack(currentCountryIndex, nextCountryIndex + 1);
             if(flag) return;
             scoreBoard[currentCountryIndex][LOOSE]++;
             scoreBoard[nextCountryIndex][WIN]++;
@@ -84,8 +82,13 @@ public class Main {
         StringBuilder sb = new StringBuilder();
     	for(int index=0; index<4; index++) {
     		init(br);
-    		solution(0, 1);
-    		sb.append(possible).append(" ");
+    		playGameBacktrack(0, 1);
+    		if(flag) {
+    			sb.append(1);
+    		}else {
+    			sb.append(0);
+    		}
+    		sb.append(" ");
     	}
     	System.out.println(sb);
     }
