@@ -1,39 +1,40 @@
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+
+import java.io.*;
+import java.util.*;
 
 public class Main {
-    static int possible; //가능한지
+	static final int COUNTRIES_NUMBER = 6;
+	static final int WIN = 0;
+	static final int TIE = 1;
+	static final int LOOSE = 2;
+	static int[][] scoreBoard = new int[6][3];
+    static int possible;
     static boolean flag;
-    static int[][] gameResult = new int[6][3];
 
     public static void init(BufferedReader br) throws IOException {
         StringTokenizer st = new StringTokenizer(br.readLine().trim());
         possible = 0;
         flag=false;
         
-        for (int team = 0; team < 6; team++) {
-        	for (int game = 0; game < 3; game++) {
-        		gameResult[team][game] = Integer.parseInt(st.nextToken());
-        	}
+        for (int countryIndex = 0; countryIndex < 6; countryIndex++) {
+        	scoreBoard[countryIndex][WIN] = Integer.parseInt(st.nextToken());
+        	scoreBoard[countryIndex][TIE] = Integer.parseInt(st.nextToken());
+        	scoreBoard[countryIndex][LOOSE] = Integer.parseInt(st.nextToken());
         }
 
     }
     
-    public static void solution(int team, int next) {
+    public static void solution(int currentCountryIndex, int nextCountryIndex) {
     	if(flag) return;
-    	//3. 다 돌았을때 모든 result가 0이 되어 있다면 가능하다.
-        if (team == 5) {
+        if (currentCountryIndex == 5) {
             int winSum = 0;
             int drawSum = 0;
             int loseSum = 0;
             
             for (int i = 0; i < 6; i++) {
-                winSum += gameResult[i][0];
-                drawSum += gameResult[i][1];
-                loseSum += gameResult[i][2];
+                winSum += scoreBoard[i][WIN];
+                drawSum += scoreBoard[i][TIE];
+                loseSum += scoreBoard[i][LOOSE];
             }
             
             if (winSum ==0 && loseSum ==0 && drawSum== 0) {
@@ -43,41 +44,37 @@ public class Main {
             return;
         }
         
-        if (next == 6) {
-            solution(team + 1, team + 2);
+        if (nextCountryIndex == 6) {
+            solution(currentCountryIndex + 1, currentCountryIndex + 2);
             return;
         }
         
         
-        //2. next 팀과 경기를 했을때 이기는 경우, 지는경우 , 비기는 경우를 모두 고려한다.
-        // 팀 team이 팀 next에게 승리하는 경우
-        if (gameResult[team][0] > 0 && gameResult[next][2] > 0) {
-            gameResult[team][0]--;
-            gameResult[next][2]--;
-            solution(team, next + 1);
+        if (scoreBoard[currentCountryIndex][WIN] > 0 && scoreBoard[nextCountryIndex][LOOSE] > 0) {
+            scoreBoard[currentCountryIndex][WIN]--;
+            scoreBoard[nextCountryIndex][LOOSE]--;
+            solution(currentCountryIndex, nextCountryIndex + 1);
             if(flag) return;
-            gameResult[team][0]++;
-            gameResult[next][2]++;
+            scoreBoard[currentCountryIndex][WIN]++;
+            scoreBoard[nextCountryIndex][LOOSE]++;
         }
         
-        // 팀 team과 팀 next가 비기는 경우
-        if (gameResult[team][1] > 0 && gameResult[next][1] > 0) {
-            gameResult[team][1]--;
-            gameResult[next][1]--;
-            solution(team, next + 1);
+        if (scoreBoard[currentCountryIndex][TIE] > 0 && scoreBoard[nextCountryIndex][TIE] > 0) {
+            scoreBoard[currentCountryIndex][TIE]--;
+            scoreBoard[nextCountryIndex][TIE]--;
+            solution(currentCountryIndex, nextCountryIndex + 1);
             if(flag) return;
-            gameResult[team][1]++;
-            gameResult[next][1]++;
+            scoreBoard[currentCountryIndex][TIE]++;
+            scoreBoard[nextCountryIndex][TIE]++;
         }
         
-        // 팀 team이 팀 next에게 패배하는 경우
-        if (gameResult[team][2] > 0 && gameResult[next][0] > 0) {
-            gameResult[team][2]--;
-            gameResult[next][0]--;
-            solution(team, next + 1);
+        if (scoreBoard[currentCountryIndex][LOOSE] > 0 && scoreBoard[nextCountryIndex][WIN] > 0) {
+            scoreBoard[currentCountryIndex][LOOSE]--;
+            scoreBoard[nextCountryIndex][WIN]--;
+            solution(currentCountryIndex, nextCountryIndex + 1);
             if(flag) return;
-            gameResult[team][2]++;
-            gameResult[next][0]++;
+            scoreBoard[currentCountryIndex][LOOSE]++;
+            scoreBoard[nextCountryIndex][WIN]++;
         }
     }
     
