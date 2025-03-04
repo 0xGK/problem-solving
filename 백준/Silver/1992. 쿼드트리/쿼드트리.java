@@ -1,20 +1,27 @@
 import java.io.*;
-import java.util.*;
-
+/*
+ * 
+ * 
+ * 
+ * 
+ */
 public class Main {
 	static int N;
-	static int board[][];
+//	static int board[][];
+	static String[] board2;
 	static StringBuilder sb;
 	
 	public static void init(BufferedReader br) throws Exception {
 		sb = new StringBuilder();
 		N = Integer.parseInt(br.readLine());
-		board = new int[N][N];
+//		board = new int[N][N];
+		board2 = new String[N];
 		for(int rowIndex=0; rowIndex<N; rowIndex++) {
-			String inputLine = br.readLine();
-			for(int colIndex=0; colIndex<N; colIndex++) {
-				board[rowIndex][colIndex] = inputLine.charAt(colIndex)-'0';
-			}
+			board2[rowIndex] = br.readLine();
+//			String inputLine = br.readLine();
+//			for(int colIndex=0; colIndex<N; colIndex++) {
+//				board[rowIndex][colIndex] = inputLine.charAt(colIndex)-'0';
+//			}
 		}
 	}
 	
@@ -26,7 +33,12 @@ public class Main {
 		boolean isAllOne = true;
 		for(int rowIndex = rowStart; rowIndex<rowStart+length; rowIndex++) {
 			for(int colIndex = colStart; colIndex<colStart+length; colIndex++) {
-				if(board[rowIndex][colIndex]==0) {
+//				if(board[rowIndex][colIndex]==0) {
+//					isAllOne = false;
+//				}else {
+//					isAllZero = false;
+//				}
+				if(board2[rowIndex].charAt(colIndex)=='0') {
 					isAllOne = false;
 				}else {
 					isAllZero = false;
@@ -54,10 +66,6 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		init(br);
 		compress(0, 0, N);
-
 		System.out.println(sb);
-		
-		
-		
 	}
 }
