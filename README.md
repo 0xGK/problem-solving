@@ -78,6 +78,7 @@
 | 문제번호 | 링크 |
 | ----- | ----- |
 |1011. Fly me to the Alpha Centauri|[링크](./%EB%B0%B1%EC%A4%80/Gold/1011.%E2%80%85Fly%E2%80%85me%E2%80%85to%E2%80%85the%E2%80%85Alpha%E2%80%85Centauri/README.md)|
+|1074. Z|[링크](./%EB%B0%B1%EC%A4%80/Gold/1074.%E2%80%85Z/Z.java)|
 |10868. 최솟값|[링크](./%EB%B0%B1%EC%A4%80/Gold/10868.%E2%80%85%EC%B5%9C%EC%86%9F%EA%B0%92/README.md)|
 |11049. 행렬 곱셈 순서|[링크](./%EB%B0%B1%EC%A4%80/Gold/11049.%E2%80%85%ED%96%89%EB%A0%AC%E2%80%85%EA%B3%B1%EC%85%88%E2%80%85%EC%88%9C%EC%84%9C/README.md)|
 |11404. 플로이드|[링크](./%EB%B0%B1%EC%A4%80/Gold/11404.%E2%80%85%ED%94%8C%EB%A1%9C%EC%9D%B4%EB%93%9C/README.md)|
