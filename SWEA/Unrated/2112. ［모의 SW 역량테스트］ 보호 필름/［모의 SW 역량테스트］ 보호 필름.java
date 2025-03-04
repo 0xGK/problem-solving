@@ -91,13 +91,14 @@ public class Solution {
         // 현재 배열을 임시 저장해고 백트랙시 복구 시키기
         // 실제 배열을 변경하지 않고, 
         //      변경시킬 index와 값을 사용해서 isValid() 메서드를 수정하면 최적화 가능할 듯
-        int[] tempLayer = new int[W];
+//        int[] tempLayer = new int[W];
          
+        int[] tempLayer = Arrays.copyOf(layers[depthIndex], W);
         for(int widthIndex=0; widthIndex<W; widthIndex++) {
-            tempLayer[widthIndex] = layers[depthIndex][widthIndex];
+//            tempLayer[widthIndex] = layers[depthIndex][widthIndex];
             layers[depthIndex][widthIndex] = 0;
         }
-         
+        
         // generate branch
         injectionBacktrack(depthIndex+1, remainedCount-1);
          
@@ -115,7 +116,7 @@ public class Solution {
     }
      
     public static void main(String[] args) throws Exception {
-//        System.setIn(new FileInputStream("input.txt"));
+        //System.setIn(new FileInputStream("input.txt"));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
         StringTokenizer st;
