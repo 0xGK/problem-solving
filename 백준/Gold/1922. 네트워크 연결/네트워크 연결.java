@@ -1,21 +1,20 @@
 import java.io.*;
 import java.util.*;
-
 public class Main {
 	static BufferedReader br;
 	static StringTokenizer st;
 	
 	static int V, E;
 	
-	static Edge[] edges;
+	static List<Edge>[] edges;
+	static boolean[] visited;
+	static Queue<Edge> pq;
 	static long totalWeight;
 	
 	static class Edge implements Comparable<Edge>{
-		int src;
 		int dest;
 		int weight;
-		public Edge(int src, int dest, int weight) {
-			this.src = src;
+		public Edge(int dest, int weight) {
 			this.dest = dest;
 			this.weight = weight;
 		}
@@ -25,48 +24,49 @@ public class Main {
 		}
 	}
 	
-	static int[] parents;
 	public static void init() throws IOException{
 		V = Integer.parseInt(br.readLine());
 		E = Integer.parseInt(br.readLine());
-		edges = new Edge[E];
-		parents = new int[V+1];
-		for(int idx=1; idx<V+1; idx++) {
-			parents[idx] = idx;
-		}
+		edges = new ArrayList[V+1];
+		visited = new boolean[V+1];
+		for(int idx=1; idx<=V; idx++) edges[idx] = new ArrayList<>();
 		for(int inputIdx=0; inputIdx<E; inputIdx++) {
 			st = new StringTokenizer(br.readLine());
 			int src = Integer.parseInt(st.nextToken());
 			int dest = Integer.parseInt(st.nextToken());
 			int weight = Integer.parseInt(st.nextToken());
-			edges[inputIdx] = new Edge(src, dest,weight);
+			edges[src].add(new Edge(dest, weight));
+			edges[dest].add(new Edge(src, weight));
 		}
 		totalWeight = 0;
 	}
-	public static int find(int e) {
-		if(parents[e] == e) return e;
-		return parents[e] = find(parents[e]);
-	}
-	public static boolean union(int e1, int e2) {
-		int root1 = find(e1);
-		int root2 = find(e2);
-		if(root1 == root2) return false;
-		parents[root1] = root2;
-		return true;
-	}
-	public static void kruskal() {
-		Arrays.sort(edges);
-		for(Edge edge : edges) {
-			if(union(edge.src, edge.dest)) {
-				totalWeight += edge.weight;
+	public static void prim() {
+		pq = new PriorityQueue<>();
+		pq.add(new Edge(1,0));
+		
+		while(!pq.isEmpty()) {
+			Edge edge = pq.poll();
+			int src = edge.dest;
+			if(visited[src]) continue;
+			visited[src] = true;
+			totalWeight += edge.weight;
+			
+			for(Edge nextEdge : edges[src]) {
+				int dest = nextEdge.dest;
+				if(visited[dest]) continue;
+				pq.add(nextEdge);
 			}
+			
 		}
+		
+
 	}
     public static void main(String[] args) throws Exception {
+        //System.setIn(new FileInputStream("input.txt"));
         br = new BufferedReader(new InputStreamReader(System.in));
          
     	init();
-    	kruskal();
+    	prim();
 
     	
     	System.out.println(totalWeight);
