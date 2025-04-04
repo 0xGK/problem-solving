@@ -36,56 +36,51 @@ public class Main {
 		maxBreakEggCnt=0;
 	}
 	
-	public static void breakEgg() {
-		int[] tempDurabilities = new int[eggSize];
-		int[] tempWeights = new int[eggSize];
-		for(int idx=0; idx<eggSize; idx++) {
-			tempDurabilities[idx] = durabilities[idx];
-			tempWeights[idx] = weights[idx];
-		}
-		for(int eggIdx=0; eggIdx<eggSize; eggIdx++) {
-			int otherEggIdx = selectedEggs[eggIdx];
-			if(tempDurabilities[eggIdx]<=0 || tempDurabilities[otherEggIdx]<=0) continue;
-			tempDurabilities[eggIdx] -= tempWeights[otherEggIdx];
-			tempDurabilities[otherEggIdx] -= tempWeights[eggIdx];
-		}
-		int breakEggCnt=0;
-		for(int eggIdx=0; eggIdx<eggSize; eggIdx++) {
-			if(tempDurabilities[eggIdx]<=0) breakEggCnt++;
-		}
-		maxBreakEggCnt = maxBreakEggCnt < breakEggCnt ? breakEggCnt : maxBreakEggCnt;
-
-	}
 	// 중복이 가능한데요?
 	public static void backtrack(int selectedCnt) {
 		if(selectedCnt==eggSize) {
-//			System.out.println(Arrays.toString(selectedEggs));
-			breakEgg();
-//			maxBreakEggCnt++;
+			int breakEggCnt=0;
+			for(int eggIdx=0; eggIdx<eggSize; eggIdx++) {
+				if(durabilities[eggIdx]<=0) breakEggCnt++;
+			}
+			maxBreakEggCnt = maxBreakEggCnt < breakEggCnt ? breakEggCnt : maxBreakEggCnt;
 			return;
 		}
 		
-		for(int eggIdx=0; eggIdx<eggSize; eggIdx++) {
-			if(eggIdx == selectedCnt) continue;
-			
-//			visited[eggIdx] = true;
-			selectedEggs[selectedCnt] = eggIdx;
+		// 전 이미 깨졌는데요?
+		if(durabilities[selectedCnt]<=0) {
 			backtrack(selectedCnt+1);
-//			visited[eggIdx] = false;
+			return;
+		}
+
+		// 전부다 깨져있는 건 아니죠?
+		boolean isFinished = true;
+		
+		// 다른 친구들을 깨봅시다.
+		for(int eggIdx=0; eggIdx<eggSize; eggIdx++) {
+			if(eggIdx == selectedCnt || durabilities[eggIdx]<=0) continue;
+			durabilities[selectedCnt] -= weights[eggIdx];
+			durabilities[eggIdx] -= weights[selectedCnt];
+			backtrack(selectedCnt+1);
+			durabilities[selectedCnt] += weights[eggIdx];
+			durabilities[eggIdx] += weights[selectedCnt];
+			isFinished = false;
+		}
+		
+		// 전부다 깨졌나 봅니다.
+		if(isFinished) {
+			backtrack(selectedCnt+1);
 		}
 		
 	}
 	
-	public static void solve() {
-		backtrack(0);
-	}
     public static void main(String[] args) throws Exception {
         //System.setIn(new FileInputStream("input.txt"));
         br = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
          
     	init();
-    	solve();
+    	backtrack(0);
     	sb.append(maxBreakEggCnt);
     	
     	System.out.println(sb);
