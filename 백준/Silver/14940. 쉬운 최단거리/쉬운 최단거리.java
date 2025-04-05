@@ -8,7 +8,8 @@ public class Main {
 	static int rowSize, colSize;
 	static int startRow, startCol;
 	static int[][] board;
-	static int[][] dp;
+	static int[][] result;
+	static boolean[][] visited;
 	static int[][] dirs = {{-1,0},{1,0},{0,-1},{0,1}};
 	static class Point{
 		int row, col;
@@ -24,30 +25,29 @@ public class Main {
 		colSize = Integer.parseInt(st.nextToken());
 		
 		board = new int[rowSize][colSize];
-		dp = new int[rowSize][colSize];
+		result = new int[rowSize][colSize];
+		visited = new boolean[rowSize][colSize];
 		for(int rowIdx=0; rowIdx<rowSize; rowIdx++) {
 			st = new StringTokenizer(br.readLine());
 			for(int colIdx=0; colIdx<colSize; colIdx++) {
 				board[rowIdx][colIdx] = Integer.parseInt(st.nextToken());
-				if(board[rowIdx][colIdx]==2) {
+				if(board[rowIdx][colIdx]==0) {
+					visited[rowIdx][colIdx] = true;
+				}
+				else if(board[rowIdx][colIdx]==2) {
 					startRow = rowIdx;
 					startCol = colIdx;
 				}
 			}
 		}
-		for(int rowIdx=0; rowIdx<rowSize; rowIdx++) {
-			Arrays.fill(dp[rowIdx], Integer.MAX_VALUE);
-		}
 	}
-	
-	
 	public static boolean isInBoard(int row, int col) {
 		return row>=0 && row<rowSize && col>=0 && col<colSize;
 	}
 	public static void playGame() {
-		dp[startRow][startCol] = 0;
 		Queue<Point> queue = new ArrayDeque<>();
 		queue.add(new Point(startRow, startCol));
+		visited[startRow][startCol] = true;
 		
 		while(!queue.isEmpty()) {
 			Point cur = queue.poll();
@@ -57,25 +57,14 @@ public class Main {
 			for(int[] dir : dirs) {
 				int nxtRow = row + dir[0];
 				int nxtCol = col + dir[1];
-				if(!isInBoard(nxtRow, nxtCol)) continue;
-				if(board[nxtRow][nxtCol]==0) continue;
+				if(!isInBoard(nxtRow, nxtCol) || visited[nxtRow][nxtCol]) continue;
 				
-				if(dp[nxtRow][nxtCol] > dp[row][col] + 1) {
-					dp[nxtRow][nxtCol] = dp[row][col] + 1;
-					queue.add(new Point(nxtRow, nxtCol));
-				}
+				visited[nxtRow][nxtCol] = true;
+				result[nxtRow][nxtCol] = result[row][col] + 1;
+				queue.add(new Point(nxtRow, nxtCol));
 			}
 		}
-		for(int rowIdx=0; rowIdx<rowSize; rowIdx++) {
-			for(int colIdx=0; colIdx<colSize; colIdx++) {
-				int distance = dp[rowIdx][colIdx]==Integer.MAX_VALUE ? 0 : dp[rowIdx][colIdx];
-				if(distance==0 && board[rowIdx][colIdx]==1) {
-					distance = -1;
-				}
-				System.out.print(distance + " ");
-			}
-			System.out.println();
-		}
+
 		
 	}
 
@@ -86,7 +75,16 @@ public class Main {
          
     	init();
     	playGame();
-
+		for(int rowIdx=0; rowIdx<rowSize; rowIdx++) {
+			for(int colIdx=0; colIdx<colSize; colIdx++) {
+				if(!visited[rowIdx][colIdx] && board[rowIdx][colIdx]==1) {
+					sb.append(-1).append(' ');
+				}else {
+					sb.append(result[rowIdx][colIdx]).append(' ');
+				}
+			}
+			sb.append('\n');
+		}
     	
     	System.out.println(sb);
     }
