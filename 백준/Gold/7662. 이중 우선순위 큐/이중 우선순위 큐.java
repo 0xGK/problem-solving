@@ -16,9 +16,9 @@ public class Main {
 		maxHeap = new PriorityQueue<>(Collections.reverseOrder());
 		hashMap = new HashMap<>();
 	}
-	public static long getMinValue() {
-		while(!minHeap.isEmpty()) {
-			int value = minHeap.poll();
+	public static long delete(Queue<Integer> q) {
+		while(!q.isEmpty()) {
+			int value = q.poll();
 			int cnt = hashMap.getOrDefault(value,0);
 			if(cnt==0) continue;
 			
@@ -32,21 +32,6 @@ public class Main {
 		return Long.MAX_VALUE;
 	}
 	
-	public static long getMaxValue() {
-		while(!maxHeap.isEmpty()) {
-			int value = maxHeap.poll();
-			int cnt = hashMap.getOrDefault(value,0);
-			if(cnt==0) continue;
-			
-			if(cnt>1){
-				hashMap.put(value, hashMap.get(value)-1);
-			}else if(cnt==1){
-				hashMap.remove(value);
-			}
-			return value;
-		}
-		return Long.MAX_VALUE;
-	}
 	public static void solve() throws IOException{
 		for(int i=0; i<N; i++) {
 			st = new StringTokenizer(br.readLine());
@@ -61,17 +46,16 @@ public class Main {
 				
 				if(hashMap.size()==0) continue;
 				if(type==-1) {
-					getMinValue();
+					delete(minHeap);
 				}else {
-					getMaxValue();
+					delete(maxHeap);
 				}
 			}
 		}
 		
 	}
     public static void main(String[] args) throws Exception {
-        //System.setIn(new FileInputStream("input.txt"));
-    	
+    	//System.setIn(new FileInputStream("input.txt"));
         br = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
         int T = Integer.parseInt(br.readLine());
@@ -81,9 +65,9 @@ public class Main {
         	if(hashMap.size()==0) {
         		sb.append("EMPTY\n");
         	}else {
-        		long value = getMaxValue();
+        		long value = delete(maxHeap);
         		sb.append(value).append(' ');
-        		if(hashMap.size()>0) value = getMinValue();
+        		if(hashMap.size()>0) value = delete(minHeap);
         		sb.append(value).append('\n');
         	}
         }
